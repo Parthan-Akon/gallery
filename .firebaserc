@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "fir-gallery-8853e"
+  },
+  "targets": {
+    "fir-gallery-8853e": {
+      "hosting": {
+        "prod": [
+          "coolpics"
+        ]
+      }
+    }
+  }
+}
