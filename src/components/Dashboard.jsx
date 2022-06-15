@@ -33,6 +33,7 @@ export default function Dashboard() {
                     setImageList((prev) => [...prev, url])
                     //setImageList(prev => ({...prev.data(), url:url, id: item.id}))
                 })
+                console.log("here");
             })
 
         })
