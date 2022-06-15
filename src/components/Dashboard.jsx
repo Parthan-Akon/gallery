@@ -25,6 +25,8 @@ export default function Dashboard() {
 
     // const amount = useSelector(state => state.amount)
 
+    
+
     useEffect(() => {
 
         listAll(imageListRef).then((response) => {
