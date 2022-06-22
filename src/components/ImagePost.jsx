@@ -1,29 +1,31 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import { doc, ref, updateDoc } from 'firebase/firestore'
-import { db, storage } from '../firebase-config';
+import { faHeart, faDownload } from '@fortawesome/free-solid-svg-icons'
+import { doc, updateDoc } from 'firebase/firestore'
+import { db } from '../firebase-config';
 import { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {saveAs} from 'file-saver'
 
 
 const accessToken = JSON.parse(localStorage.getItem("AccessToken"));
+const optimizeURL = "https://img.gs/gthrlwxdmc/640/";
 
 export default function ImagePost(props) {
 
 
-
     const handleImageClick = () => {
-        var modal = document.getElementById('myImageModal');
-        modal.setAttribute("style", "visibility:visible;opacity:1;transition: visibility .5s, opacity .5s linear;")
 
         var imageTag = document.getElementById('imageTag');
+        imageTag.src = "";
         imageTag.src = props.source;
+        imageTag.alt = props.data.imagename;
 
+        var modal = document.getElementById('myImageModal');
+        modal.setAttribute("style", "visibility:visible;opacity:1;wtransition: visibility .5s, opacity .5s linear;")
+        
     }
-
-
 
     if ((props.indexValue % 2) === 0) {
         return (
@@ -31,7 +33,7 @@ export default function ImagePost(props) {
                 <div className="gallery-container h-span-2">
                     <div className="gallery-item">
                         <div className="image">
-                            <img src={props.source} onClick={handleImageClick} />
+                            <img src={optimizeURL + props.source} width="640" height="360" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename} />
                         </div>
                         <div className="text">Cool pics</div>
                     </div>
@@ -43,10 +45,10 @@ export default function ImagePost(props) {
     } else if ((props.indexValue % 4) === 0) {
         return (
             <>
-                <div className="gallery-container w-span-4">
+                <div className="gallery-container w-span-2">
                     <div className="gallery-item">
                         <div className="image">
-                            <img src={props.source} onClick={handleImageClick} />
+                            <img src={optimizeURL + props.source} width="640" height="360" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename} />
                         </div>
                         <div className="text">Cool pics</div>
                     </div>
@@ -63,7 +65,7 @@ export default function ImagePost(props) {
             <div className="gallery-container">
                 <div className="gallery-item">
                     <div className="image">
-                        <img src={props.source} onClick={handleImageClick} />
+                        <img src={optimizeURL + props.source} width="640" height="360" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename}  />
                     </div>
                     <div className="text">Cool pics</div>
                 </div>
@@ -78,23 +80,33 @@ export default function ImagePost(props) {
 function Toolbar(props) {
 
     const [likesCount, setLikesCount] = useState(0);
-    const notify = () => toast("Wow so easy!");
+    const [likedFlag,setLikedFlag] = useState(false);
 
 
     useEffect(() => {
-        setLikesCount(props?.data?.likes.length)
+        setLikesCount(props?.data?.likes.length);
+        for(let obj of props.data?.likes){
+            if(obj === accessToken?.profileObj?.email){
+                setLikedFlag(true);
+                break;
+            }
+        }
+
     }, []);
+
+    function downloadImage(){
+        
+        saveAs(props?.data?.imageLink,"coolpicsimage.png")
+    }
+
 
     const changeHeartColor = () => {
 
         var useremail = accessToken?.profileObj.email;
-        console.log(useremail)
         if (!useremail) return;
 
         let found = false;
-        console.log(props.data.likes);
         for (let obj of props?.data?.likes) {
-            console.log(obj)
             if (obj === useremail) {
                 found = true;
                 break;
@@ -102,19 +114,16 @@ function Toolbar(props) {
         }
 
         if (!found) {
-            console.log("can be updated");
             let obj = props.data;
             obj.likes.push(useremail);
-            console.log(obj);
-
             const docRef = doc(db, "userImages", props?.data?.id);
 
             updateDoc(docRef, obj).then(res => {
-                console.log(res)
                 setLikesCount(prev => prev + 1);
+                setLikedFlag(true);
                 toast.success('Awesome! 🤝😁', {
                     position: "top-right",
-                    className:"custom-toast",
+                    className: "custom-toast",
                     autoClose: 1500,
                     hideProgressBar: false,
                     closeOnClick: true,
@@ -125,10 +134,9 @@ function Toolbar(props) {
             }).catch(err => console.log(err));
 
         } else {
-            console.log("here")
             toast.info('You already liked this photo! 😏', {
                 position: "top-right",
-                className:"custom-toast",
+                className: "custom-toast",
                 autoClose: 1500,
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -144,14 +152,20 @@ function Toolbar(props) {
         <>
             <div className="toolbar">
                 <div className="toolbar-item" >
-                    <FontAwesomeIcon className='heartIcon' icon={faHeart} onClick={changeHeartColor} />
-                    <div style={{ 'marginLeft': '7px' }} >
-                        {likesCount} likes
+                    <div style={{ 'display': 'flex', 'margin': 'auto 0', 'paddingLeft': '10px' }}>
+                        {likedFlag && <FontAwesomeIcon className='redHeartIcon' icon={faHeart} onClick={changeHeartColor} />}
+                        {!likedFlag && <FontAwesomeIcon className='heartIcon' icon={faHeart} onClick={changeHeartColor} />}
+                        <div style={{ 'marginLeft': '7px','fontSize':'13px' }} >
+                            {likesCount} likes
+                        </div>
                     </div>
-
-
+                    <div style={{ 'display': 'flex', 'margin': 'auto 0', 'paddingRight': '10px' }}>
+                      
+                            
+                            <FontAwesomeIcon className='heartIcon' icon={faDownload} onClick={downloadImage} />
+                        
+                    </div>
                 </div>
-
             </div>
         </>
     )
