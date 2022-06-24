@@ -5,6 +5,7 @@ import { addDoc, collection, getDocs, orderBy, query } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import NavBar from "./NavBar";
 
 
 
@@ -108,7 +109,7 @@ export default function Dashboard() {
     return (
 
         <>
-            {/* <NavBar /> */}
+            <NavBar />
             <ToastContainer position="top-right"
                 autoClose={3000}
                 hideProgressBar={false}
@@ -120,7 +121,7 @@ export default function Dashboard() {
                 pauseOnHover />
 
             <div className="flex justify-center">
-                <div className="mt-4 mb-8">
+                <div className="mb-8">
                     <div className="flex justify-end">
                         <button onClick={handleButtonClick} type="button"
                             data-mdb-ripple="true"

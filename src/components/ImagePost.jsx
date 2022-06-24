@@ -4,9 +4,9 @@ import { faHeart, faDownload } from '@fortawesome/free-solid-svg-icons'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase-config';
 import { useEffect, useState } from 'react';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {saveAs} from 'file-saver'
+import { saveAs } from 'file-saver'
 
 
 const accessToken = JSON.parse(localStorage.getItem("AccessToken"));
@@ -24,7 +24,7 @@ export default function ImagePost(props) {
 
         var modal = document.getElementById('myImageModal');
         modal.setAttribute("style", "visibility:visible;opacity:1;wtransition: visibility .5s, opacity .5s linear;")
-        
+
     }
 
     if ((props.indexValue % 2) === 0) {
@@ -33,7 +33,7 @@ export default function ImagePost(props) {
                 <div className="gallery-container h-span-2">
                     <div className="gallery-item">
                         <div className="image">
-                            <img src={optimizeURL + props.source} width="640" height="360" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename} />
+                            <img src={optimizeURL + props.source} width="auto" height="100%" loading='lazy' onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename} />
                         </div>
                         <div className="text">Cool pics</div>
                     </div>
@@ -48,7 +48,7 @@ export default function ImagePost(props) {
                 <div className="gallery-container w-span-2">
                     <div className="gallery-item">
                         <div className="image">
-                            <img src={optimizeURL + props.source} width="640" height="360" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename} />
+                            <img loading="lazy" src={optimizeURL + props.source} width="auto" height="100%" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename} />
                         </div>
                         <div className="text">Cool pics</div>
                     </div>
@@ -65,7 +65,7 @@ export default function ImagePost(props) {
             <div className="gallery-container">
                 <div className="gallery-item">
                     <div className="image">
-                        <img src={optimizeURL + props.source} width="640" height="360" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename}  />
+                        <img loading="lazy" src={optimizeURL + props.source} width="auto" height="100%" onClick={handleImageClick} alt={props?.data?.imagename} title={props?.data?.imagename} />
                     </div>
                     <div className="text">Cool pics</div>
                 </div>
@@ -80,13 +80,12 @@ export default function ImagePost(props) {
 function Toolbar(props) {
 
     const [likesCount, setLikesCount] = useState(0);
-    const [likedFlag,setLikedFlag] = useState(false);
-
+    const [likedFlag, setLikedFlag] = useState(false);
 
     useEffect(() => {
         setLikesCount(props?.data?.likes.length);
-        for(let obj of props.data?.likes){
-            if(obj === accessToken?.profileObj?.email){
+        for (let obj of props.data?.likes) {
+            if (obj === accessToken?.profileObj?.email) {
                 setLikedFlag(true);
                 break;
             }
@@ -94,9 +93,9 @@ function Toolbar(props) {
 
     }, []);
 
-    function downloadImage(){
-        
-        saveAs(props?.data?.imageLink,"coolpicsimage.png")
+    function downloadImage() {
+
+        saveAs(props?.data?.imageLink, "coolpicsimage.png")
     }
 
 
@@ -155,17 +154,26 @@ function Toolbar(props) {
                     <div style={{ 'display': 'flex', 'margin': 'auto 0', 'paddingLeft': '10px' }}>
                         {likedFlag && <FontAwesomeIcon className='redHeartIcon' icon={faHeart} onClick={changeHeartColor} />}
                         {!likedFlag && <FontAwesomeIcon className='heartIcon' icon={faHeart} onClick={changeHeartColor} />}
-                        <div style={{ 'marginLeft': '7px','fontSize':'13px' }} >
-                            {likesCount} likes
+                        <div>
+                            <div style={{ 'marginLeft': '7px', 'fontSize': '13px' }} >
+                                {likesCount} likes
+                            </div>
+                            <div style={{ 'marginLeft': '7px', 'fontSize': '13px' }} >
+                                Uploaded by {props.data.username}
+                            </div>
                         </div>
+
                     </div>
-                    <div style={{ 'display': 'flex', 'margin': 'auto 0', 'paddingRight': '10px' }}>
-                      
-                            
-                            <FontAwesomeIcon className='heartIcon' icon={faDownload} onClick={downloadImage} />
-                        
+
+                    <div style={{ 'display': 'flex', 'margin': '10px 0px', 'paddingRight': '10px' }}>
+
+
+                        <FontAwesomeIcon className='heartIcon' icon={faDownload} onClick={downloadImage} />
+
                     </div>
+
                 </div>
+                {/* <div style={{ fontSize: "13px", margin: 'auto', marginLeft: '8px' }}>Uploaded by {props.data.username}</div> */}
             </div>
         </>
     )

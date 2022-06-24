@@ -13,6 +13,92 @@
     transition: 1.5s ease-in-out;
 }
 
+.login {
+    transform: scale(1) !important;
+}
+
+.logo-class {
+    width: 147.628px;
+    height: 206.6px;
+    margin: auto;
+    transform: scale(0.8);
+    /* position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1); */
+    z-index: 0;
+    cursor: pointer;
+}
+
+.fill-dark-sea-green {
+    fill: darkseagreen;
+}
+
+.google-button {
+    display: inline-flex;
+    align-items: center;
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 2px 0px, rgba(0, 0, 0, 0.24) 0px 0px 1px 0px;
+    padding: 0px;
+    border-radius: 2px;
+    border: 1px solid transparent;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: Roboto, sans-serif;
+    margin-top: 30px;
+    width: 220px;
+}
+
+.profile-img {
+    height: 46px;
+    width: 46px;
+    border-radius: 7px;
+    transition: 0.2s ease-in;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+}
+
+.nav-profile-container {
+    font-size: 12px;
+    text-align: left;
+    margin-left: 8px;
+    border-right: 2px solid;
+    padding-right: 11px;
+}
+
+.nav-parent-container {
+    display: flex;
+    color: white;
+    justify-content: end;
+}
+
+.name-size {
+    font-size: 15px;
+}
+
+.google-button>div {
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: 2px;
+    transform: scale(1.5);
+}
+
+.google-button>span {
+    padding: 10px 10px 10px 0px;
+    font-weight: 500;
+    margin: auto;
+    color: darkseagreen;
+}
+
+.logo-bg {
+    background-color: rgb(199 247 254);
+}
+
 .custom-toast {
     background-color: #34343494 !important;
     color: white !important;
@@ -20,8 +106,8 @@
 
 .toolbar {
     color: white;
-    transform: translateY(-29px);
-    height: 30px;
+    transform: translateY(-58px);
+    height: 60px;
     background-color: #15151573;
 }
 
@@ -29,12 +115,13 @@
     display: flex;
     justify-content: space-between;
     height: 100%;
+    text-align: start;
 }
 
 .heartIcon {
     color: white;
     cursor: pointer;
-    margin: auto;
+    margin-top: 1px;
 }
 
 .heartIcon:hover {
@@ -45,7 +132,7 @@
 .redHeartIcon {
     color: red;
     cursor: pointer;
-    margin: auto;
+    margin-top: 1px;
 }
 
 .redHeartIcon:hover {
@@ -281,5 +368,25 @@ img {
     .close-blank {
         display: block;
         visibility: hidden;
+    }
+    .profile-img {
+        height: 35px;
+        width: 35px;
+        border-radius: 7px;
+        transition: 0.2s ease-in;
+    }
+    .nav-profile-container {
+        font-size: 10px;
+        text-align: left;
+        margin-left: 8px;
+        padding-right: 45px;
+    }
+    .name-size {
+        font-size: 14px;
+    }
+    .nav-parent-container {
+        display: flex;
+        color: white;
+        justify-content: space-between;
     }
 }
