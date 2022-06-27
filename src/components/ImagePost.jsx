@@ -22,8 +22,11 @@ export default function ImagePost(props) {
         imageTag.src = "";
         imageTag.src = props.source;
         imageTag.alt = props.data.imagename;
+        imageTag.setAttribute('data-index',props.indexValue - 1);
 
         var modal = document.getElementById('myImageModal');
+        var body = document.querySelector('body');
+        body.style.overflow = "hidden";
         modal.setAttribute("style", "visibility:visible;opacity:1;wtransition: visibility .5s, opacity .5s linear;")
 
     }
@@ -82,11 +85,9 @@ function Toolbar(props) {
 
 
 
-    const [likesCount, setLikesCount] = useState(0);
     const [likedFlag, setLikedFlag] = useState(false);
 
     useEffect(() => {
-        setLikesCount(props?.data?.likes.length);
         for (let obj of props.data?.likes) {
             if (obj === accessToken?.profileObj?.email) {
                 setLikedFlag(true);
@@ -148,7 +149,6 @@ function Toolbar(props) {
             const docRef = doc(db, "userImages", props?.data?.id);
 
             updateDoc(docRef, obj).then(res => {
-                setLikesCount(prev => prev + 1);
                 setLikedFlag(true);
                 toast.success('Awesome! 🤝😁', {
                     position: "top-right",

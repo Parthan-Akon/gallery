@@ -1,7 +1,7 @@
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 7;
     padding-top: 100px;
     left: 0;
     top: 0;
@@ -124,6 +124,36 @@ nav {
     margin-top: 1px;
 }
 
+.arrow-right {
+    position: absolute;
+    top: 50%;
+    left: 95%;
+    color: white;
+    cursor: pointer;
+    font-size: 25px;
+    transition: 0.3s ease-in-out;
+}
+
+.arrow-left {
+    position: absolute;
+    top: 50%;
+    left: 3.5%;
+    color: white;
+    cursor: pointer;
+    font-size: 25px;
+    transition: 0.3s ease-in-out;
+}
+
+.arrow-left:hover {
+    transform: scale(1.5);
+    transition: 0.3s ease-in-out;
+}
+
+.arrow-right:hover {
+    transform: scale(1.5);
+    transition: 0.3s ease-in-out;
+}
+
 .heartIcon:hover {
     transform: scale(1.3);
     transition: 0.3s ease-in-out;
@@ -184,6 +214,13 @@ nav {
     margin: 0 auto;
 }
 
+@keyframes slide-left {
+    0% {
+        transform: translateX(-500px);
+    }
+    100% {}
+}
+
 img {
     aspect-ratio: attr(width) / attr(height);
 }
@@ -193,10 +230,11 @@ img {
 
 .close {
     color: #ffffff;
-    float: right;
     font-size: 28px;
     font-weight: bold;
     margin-right: 12px;
+    position: absolute;
+    left: 96%;
 }
 
 .close-blank {
@@ -277,6 +315,24 @@ img {
     animation: move-down .3s linear;
     padding: 1em;
     width: 100%;
+}
+
+.animate-right {
+    /* animation: slide-right 3s linear; */
+    transform: translateX(200px);
+    transition: .5s linear;
+}
+
+@keyframes slide-right {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(25);
+    }
+    100% {
+        transform: translateX(50);
+    }
 }
 
 @keyframes move-down {
@@ -365,7 +421,7 @@ img {
         display: flex;
         justify-items: center;
         align-items: center;
-        z-index: 1;
+        z-index: 5;
         /* padding: 250px; */
         left: 0;
         top: 0;
@@ -378,6 +434,10 @@ img {
     .close-blank {
         display: block;
         visibility: hidden;
+    }
+    .close {
+        left: 92%;
+        top: 10%;
     }
     .profile-img {
         height: 35px;
@@ -401,5 +461,11 @@ img {
     }
     .header-sticky {
         justify-content: left;
+    }
+    .arrow-right {
+        left: 90%;
+    }
+    .arrow-left {
+        left: 4%;
     }
 }

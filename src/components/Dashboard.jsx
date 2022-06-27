@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import ImagePost from "./ImagePost";
 import { db, storage } from '../firebase-config';
 import { addDoc, collection, getDocs, orderBy, query, onSnapshot, where } from "firebase/firestore"
@@ -21,7 +23,7 @@ export default function Dashboard() {
     const myPhotosQ = query(userImageRef, where("uploadedBy", "==", accessToken.profileObj.email));
 
 
-    
+
     useEffect(() =>
         onSnapshot(q, (snapshot) => {
             let arr = [];
@@ -32,9 +34,7 @@ export default function Dashboard() {
         }), []
     )
 
-    function handleScroll() {
-        console.log(window.scrollY);
-    }
+
 
 
     const handleButtonClick = () => {
@@ -71,7 +71,7 @@ export default function Dashboard() {
         })
     }
 
-    
+
 
     const handleFileUpload = () => {
 
@@ -123,6 +123,8 @@ export default function Dashboard() {
 
     const closeImageModal = () => {
         var modal = document.getElementById('myImageModal');
+        var body = document.querySelector('body');
+        body.style.overflow = "auto";
         modal.setAttribute("style", "visibility:hidden;opacity:0;transition: visibility .3s, opacity .3s linear;")
     }
 
@@ -130,6 +132,23 @@ export default function Dashboard() {
 
         var input = document.getElementById('inputFileTag');
         input.click();
+    }
+
+
+
+    const handleNextPreviousImg = (value) => {
+        var img = document.getElementById('imageTag');
+
+        let index = +img.getAttribute("data-index") + value;
+
+        if (index === userImageList.length) return;
+
+        img.src = "";
+
+        img.src = userImageList.at(index).imageLink;
+        img.alt = userImageList.at(index).imagename;
+
+        img.setAttribute('data-index', index);
     }
 
 
@@ -154,8 +173,8 @@ export default function Dashboard() {
                     <button onClick={handleDashboardClick} type="button"
                         data-mdb-ripple="true"
                         data-mdb-ripple-color="light"
-                        className="inline-block px-6 py-2.5 bg-[#414040] w-[118px] text-white font-medium text-xs leading-tight uppercase shadow-md hover:bg-[#3c8583] hover:shadow-lg focus:bg-[#3c8583] focus:shadow-lg focus:outline-none focus:ring-0 active:bg-[#3c8583] active:shadow-lg transition duration-150 ease-in-out">
-                        Dashboard
+                        className="inline-block px-6 py-2.5 bg-[#414040] w-[118px] text-white font-medium text-xs leading-tight uppercase shadow-md hover:bg-[#5f9ea0] hover:shadow-lg focus:bg-[#5f9ea0] focus:shadow-lg focus:outline-none focus:ring-0 active:bg-[#5f9ea0] active:shadow-lg transition duration-150 ease-in-out">
+                        All
                     </button>
 
                 </div>
@@ -175,8 +194,8 @@ export default function Dashboard() {
                     <button onClick={handleMyPhotosClick} type="button"
                         data-mdb-ripple="true"
                         data-mdb-ripple-color="light"
-                        className="inline-block px-6 py-2.5 bg-[#414040] w-[118px] text-white font-medium text-xs leading-tight uppercase shadow-md hover:bg-[#3c8583] hover:shadow-lg focus:bg-[#3c8583] focus:shadow-lg focus:outline-none focus:ring-0 active:bg-[#3c8583] active:shadow-lg transition duration-150 ease-in-out">
-                        My photos
+                        className="inline-block px-6 py-2.5 bg-[#414040] w-[118px] text-white font-medium text-xs leading-tight uppercase shadow-md hover:bg-[#5f9ea0] hover:shadow-lg focus:bg-[#5f9ea0] focus:shadow-lg focus:outline-none focus:ring-0 active:bg-[#5f9ea0] active:shadow-lg transition duration-150 ease-in-out">
+                        My snaps
                     </button>
 
                 </div>
@@ -213,6 +232,12 @@ export default function Dashboard() {
                     <div className="close" onClick={closeImageModal}>&times;</div>
                     <img id="imageTag" alt="" />
                     <div className="close-blank" style={{ visibility: "hidden" }}>x</div>
+
+                    <FontAwesomeIcon className='arrow-right' icon={faArrowRight} onClick={() => handleNextPreviousImg(1)} />
+
+                    <FontAwesomeIcon className='arrow-left' icon={faArrowLeft} onClick={() => handleNextPreviousImg(-1)} />
+
+
                 </div>
 
             </div>
