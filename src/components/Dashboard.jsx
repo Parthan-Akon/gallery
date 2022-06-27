@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ImagePost from "./ImagePost";
 import { db, storage } from '../firebase-config';
-import { addDoc, collection, getDocs, orderBy, query } from "firebase/firestore"
+import { addDoc, collection, getDocs, orderBy, query, onSnapshot, where } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,34 +17,61 @@ export default function Dashboard() {
     const [userImageList, setUserImageList] = useState([]);
     const userImageRef = collection(db, "userImages");
     const accessToken = JSON.parse(localStorage.getItem("AccessToken"));
+    const q = query(userImageRef, orderBy("uploadedDate", "desc"));
+    const myPhotosQ = query(userImageRef, where("uploadedBy", "==", accessToken.profileObj.email));
 
 
-
-
-    useEffect(() => {
-        getUserImageList();
-    }, [])
-
-    function getUserImageList() {
-        const q = query(userImageRef, orderBy("uploadedDate", "desc"));
-
-        getDocs(q).then(res => {
+    
+    useEffect(() =>
+        onSnapshot(q, (snapshot) => {
             let arr = [];
-            res.docs.forEach(doc => {
+            snapshot.docs.forEach(doc => {
                 arr.push({ ...doc.data(), id: doc.id })
             })
-
             setUserImageList(arr);
-        }).catch(err => {
-            console.log(err);
-        })
+        }), []
+    )
+
+    function handleScroll() {
+        console.log(window.scrollY);
     }
 
 
     const handleButtonClick = () => {
         var modal = document.getElementById('myModal');
         modal.style.display = 'block'
+        setSelectedFile(null)
     }
+
+    const handleMyPhotosClick = () => {
+
+        getDocs(myPhotosQ).then(res => {
+            let arr = [];
+            res.docs.forEach(doc => {
+                arr.push({ ...doc.data(), id: doc.id })
+            })
+
+            window.scrollTo({ top: 273, behavior: 'smooth' });
+            setUserImageList(arr);
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
+    const handleDashboardClick = () => {
+        getDocs(q).then(res => {
+            let arr = [];
+            res.docs.forEach(doc => {
+                arr.push({ ...doc.data(), id: doc.id })
+            })
+            window.scrollTo({ top: 273, behavior: 'smooth' });
+            setUserImageList(arr);
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
+    
 
     const handleFileUpload = () => {
 
@@ -83,7 +110,7 @@ export default function Dashboard() {
         console.log(obj);
 
         addDoc(collection(db, "userImages"), obj).then(res => {
-            getUserImageList();
+            //getUserImageList();
         }).catch(err => console.log(err))
 
     }
@@ -91,7 +118,7 @@ export default function Dashboard() {
     const closeModal = () => {
         var modal = document.getElementById('myModal');
         modal.style.display = 'none'
-        getUserImageList();
+        // getUserImageList();
     }
 
     const closeImageModal = () => {
@@ -120,16 +147,38 @@ export default function Dashboard() {
                 draggable
                 pauseOnHover />
 
-            <div className="flex justify-center">
-                <div className="mb-8">
-                    <div className="flex justify-end">
-                        <button onClick={handleButtonClick} type="button"
-                            data-mdb-ripple="true"
-                            data-mdb-ripple-color="light"
-                            className="inline-block px-6 py-2.5 bg-[#414040] text-white font-medium text-xs leading-tight uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
-                            Upload
-                        </button>
-                    </div>
+            <div className="flex gap-[13px] header-sticky">
+
+                <div className="mb-[12px]">
+
+                    <button onClick={handleDashboardClick} type="button"
+                        data-mdb-ripple="true"
+                        data-mdb-ripple-color="light"
+                        className="inline-block px-6 py-2.5 bg-[#414040] w-[118px] text-white font-medium text-xs leading-tight uppercase shadow-md hover:bg-[#3c8583] hover:shadow-lg focus:bg-[#3c8583] focus:shadow-lg focus:outline-none focus:ring-0 active:bg-[#3c8583] active:shadow-lg transition duration-150 ease-in-out">
+                        Dashboard
+                    </button>
+
+                </div>
+
+                <div className="mb-[12px]">
+
+                    <button onClick={handleButtonClick} type="button"
+                        data-mdb-ripple="true"
+                        data-mdb-ripple-color="light"
+                        className="inline-block px-6 py-2.5 bg-[#8fbc8f] w-[118px] text-black font-semibold text-xs leading-tight uppercase shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out">
+                        Upload
+                    </button>
+
+                </div>
+                <div className="mb-[12px]">
+
+                    <button onClick={handleMyPhotosClick} type="button"
+                        data-mdb-ripple="true"
+                        data-mdb-ripple-color="light"
+                        className="inline-block px-6 py-2.5 bg-[#414040] w-[118px] text-white font-medium text-xs leading-tight uppercase shadow-md hover:bg-[#3c8583] hover:shadow-lg focus:bg-[#3c8583] focus:shadow-lg focus:outline-none focus:ring-0 active:bg-[#3c8583] active:shadow-lg transition duration-150 ease-in-out">
+                        My photos
+                    </button>
+
                 </div>
             </div>
 
@@ -163,7 +212,7 @@ export default function Dashboard() {
                 <div>
                     <div className="close" onClick={closeImageModal}>&times;</div>
                     <img id="imageTag" alt="" />
-                    <div className="close-blank" style={{visibility:"hidden"}}>x</div>
+                    <div className="close-blank" style={{ visibility: "hidden" }}>x</div>
                 </div>
 
             </div>

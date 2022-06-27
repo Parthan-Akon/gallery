@@ -1,12 +1,13 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart, faDownload } from '@fortawesome/free-solid-svg-icons'
-import { doc, updateDoc } from 'firebase/firestore'
-import { db } from '../firebase-config';
+import { faHeart, faDownload, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore'
+import { db, storage } from '../firebase-config';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { saveAs } from 'file-saver'
+import { deleteObject, ref } from 'firebase/storage';
 
 
 const accessToken = JSON.parse(localStorage.getItem("AccessToken"));
@@ -79,6 +80,8 @@ export default function ImagePost(props) {
 
 function Toolbar(props) {
 
+
+
     const [likesCount, setLikesCount] = useState(0);
     const [likedFlag, setLikedFlag] = useState(false);
 
@@ -88,6 +91,8 @@ function Toolbar(props) {
             if (obj === accessToken?.profileObj?.email) {
                 setLikedFlag(true);
                 break;
+            } else {
+                setLikedFlag(false);
             }
         }
 
@@ -96,6 +101,31 @@ function Toolbar(props) {
     function downloadImage() {
 
         saveAs(props?.data?.imageLink, "coolpicsimage.png")
+    }
+
+    function deleteImage() {
+        console.log(props);
+        const imageRef = ref(storage, 'images/' + props.data.imagename);
+
+        //delete record from database
+        toast.promise(
+            deleteDoc(doc(db, 'userImages', props.data.id)).then(res => {
+                console.log("image data deleted successfully!");
+                //delete from bucket
+
+            }),
+            {
+                pending: 'Deleting..... 😪',
+                success: 'Image deleted! 😕',
+                error: 'Couldn\'t delete image! 🤯'
+            }
+        )
+        deleteObject(imageRef).then(obj => {
+            console.log("Image deletion successful!");
+        })
+
+
+
     }
 
 
@@ -156,7 +186,7 @@ function Toolbar(props) {
                         {!likedFlag && <FontAwesomeIcon className='heartIcon' icon={faHeart} onClick={changeHeartColor} />}
                         <div>
                             <div style={{ 'marginLeft': '7px', 'fontSize': '13px' }} >
-                                {likesCount} likes
+                                {props.data.likes.length} likes
                             </div>
                             <div style={{ 'marginLeft': '7px', 'fontSize': '13px' }} >
                                 Uploaded by {props.data.username}
@@ -164,13 +194,20 @@ function Toolbar(props) {
                         </div>
 
                     </div>
+                    <div>
 
-                    <div style={{ 'display': 'flex', 'margin': '10px 0px', 'paddingRight': '10px' }}>
 
+                        <div style={{ 'display': 'flex', 'margin': '10px 0px', 'paddingRight': '10px' }}>
+                            {
+                                props.data.uploadedBy === accessToken?.profileObj.email &&
+                                <FontAwesomeIcon className='heartIcon' icon={faTrashCan} style={{ marginRight: '10px' }} onClick={deleteImage} />
+                            }
 
-                        <FontAwesomeIcon className='heartIcon' icon={faDownload} onClick={downloadImage} />
+                            <FontAwesomeIcon className='heartIcon' icon={faDownload} onClick={downloadImage} />
 
+                        </div>
                     </div>
+
 
                 </div>
                 {/* <div style={{ fontSize: "13px", margin: 'auto', marginLeft: '8px' }}>Uploaded by {props.data.username}</div> */}
